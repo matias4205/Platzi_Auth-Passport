@@ -20,4 +20,4 @@ if(option == 'sign'){
     console.log(verifyToken(nameOrToken, secret));
 }else{
     console.log('Options need to be: "SIGN" or "VERIFY"');
-}git@github.com:matias4205/Platzi_Auth-Passport.git
+}
