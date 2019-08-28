@@ -4,9 +4,15 @@ const boom = require('@hapi/boom');
 const jwt = require('jsonwebtoken');
 
 const ApiKeysService = require('../services/apiKeys');
+const UsersService = require('../services/users');
+const validationHandler = require('../utils/middleware/validationHandler');
+const { createUserSchema } = require('../utils/schemas/users');
 
 const { config } = require('../config');
+
 const apiKeyService = new ApiKeysService();
+const usersService = new UsersService(); 
+
 //Basic strategy
 require('../utils/auth/strategies/basic');
 
@@ -59,6 +65,21 @@ router.post('/sign-in', async (req, res, next) => {
             next(err)
         }
     })(req, res, next);
+});
+
+router.post('/sign-up', validationHandler(createUserSchema), async (req, res, next) => {
+    const { body: user } = req;
+
+    try {
+        const createdUserId = await usersService.createUser({ user });
+
+        res.status(201).json({
+            data: createdUserId,
+            message: "User created succesfully"
+        });
+    } catch (err) {
+        next(err)
+    }
 });
 
 module.exports = router;

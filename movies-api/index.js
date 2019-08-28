@@ -20,8 +20,8 @@ app.use(express.json());
 
 // routes
 moviesApi(app);
-app.use('/userMovies', userMoviesApi);
-app.use('/auth', authApi);
+app.use('/api/userMovies', userMoviesApi);
+app.use('/api/auth', authApi);
 
 // Catch 404
 app.use(notFoundHandler);
