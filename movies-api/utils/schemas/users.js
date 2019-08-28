@@ -1,6 +1,6 @@
 const joi = require('@hapi/joi');
 
-const userIdSChema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
+const userIdSchema = joi.string().regex(/^[0-9a-fA-F]{24}$/);
 
 const createdUserSchema = {
     name: joi.string().max(100).required(),
@@ -10,6 +10,6 @@ const createdUserSchema = {
 }
 
 module.exports = {
-    userIdSChema,
+    userIdSchema,
     createdUserSchema
 }
