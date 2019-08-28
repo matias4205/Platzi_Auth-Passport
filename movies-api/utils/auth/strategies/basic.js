@@ -25,4 +25,4 @@ passport.use(new BasicStrategy( async (email, password, done) => {
     } catch (err) {
         done(err, false)
     }
-}))
+}));

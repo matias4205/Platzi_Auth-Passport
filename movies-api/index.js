@@ -5,6 +5,7 @@ const { config } = require('./config/index');
 
 const moviesApi = require('./routes/movies');
 const userMoviesApi = require('./routes/userMovies');
+const authApi = require('./routes/auth');
 
 const {
   logErrors,
@@ -20,6 +21,7 @@ app.use(express.json());
 // routes
 moviesApi(app);
 app.use('/userMovies', userMoviesApi);
+app.use('/auth', authApi);
 
 // Catch 404
 app.use(notFoundHandler);

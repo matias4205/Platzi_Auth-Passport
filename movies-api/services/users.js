@@ -7,10 +7,9 @@ class UsersService{
         this.mongoDB = new Mongo();
     }
 
-    async getUser({ userId }){
-        const query = userId && { userId };
-        const user = await this.mongoDB.get(this.collection, query);
-        return user || {}
+    async getUser({ email }) {
+        const [ user ] = await this.mongoDB.getAll(this.collection, { email });
+        return user;
     }
 
     // async getUsers(query){
