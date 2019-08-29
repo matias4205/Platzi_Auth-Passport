@@ -20,7 +20,7 @@ app.use(express.json());
 
 // routes
 moviesApi(app);
-app.use('/api/userMovies', userMoviesApi);
+app.use('/api/user-movies', userMoviesApi);
 app.use('/api/auth', authApi);
 
 // Catch 404

@@ -1,7 +1,7 @@
 const express = require("express");
 const passport = require("passport");
-const session = require("express-session");
 const boom = require("@hapi/boom");
+const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const axios = require("axios");
 
@@ -20,10 +20,10 @@ app.use(passport.session());
 require("./utils/auth/strategies/basic");
 
 // OAuth strategy
-require("./utils/auth/strategies/oauth");
+// require("./utils/auth/strategies/oauth");
 
 // Twitter strategy
-require("./utils/auth/strategies/twitter");
+// require("./utils/auth/strategies/twitter");
 
 app.post("/auth/sign-in", async function(req, res, next) {
   passport.authenticate("basic", function(error, data) {
@@ -78,17 +78,17 @@ app.post("/user-movies", async function(req, res, next) {
     const { data, status } = await axios({
       url: `${config.apiUrl}/api/user-movies`,
       headers: { Authorization: `Bearer ${token}` },
-      method: "post",
+      method: 'post',
       data: userMovie
     });
-
-    if (status !== 201) {
-      return next(boom.badImplementation());
+    console.log({data, status});
+    if(status !== 201){
+      next(boom.badImplementation());
+    }else{
+      res.status(200).json(data);
     }
-
-    res.status(201).json(data);
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 });
 
