@@ -20,7 +20,7 @@ app.use(passport.session());
 require("./utils/auth/strategies/basic");
 
 // OAuth strategy
-// require("./utils/auth/strategies/oauth");
+require("./utils/auth/strategies/oauth");
 
 // Twitter strategy
 // require("./utils/auth/strategies/twitter");
