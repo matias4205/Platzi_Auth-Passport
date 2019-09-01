@@ -116,19 +116,19 @@ app.delete("/user-movies/:userMovieId", async function(req, res, next) {
 app.get(
   "/auth/google-oauth",
   passport.authenticate("google-oauth", {
-    scope: ["email", "profile", "openid"]
+    scope: ["email", "profile", "openid"] //This are the scopes that the userOwner will be asked for
   })
 );
 
 app.get(
   "/auth/google-oauth/callback",
   passport.authenticate("google-oauth", { session: false }),
-  function(req, res, next) {
+  function(req, res, next) { //Receives the user and is the responsable of making the cookie and giving back the user in the body
     if (!req.user) {
       next(boom.unauthorized());
     }
 
-    const { token, ...user } = req.user;
+    const { token, user } = req.user;
 
     res.cookie("token", token, {
       httpOnly: !config.dev,

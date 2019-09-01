@@ -10,13 +10,13 @@ const GOOGLE_TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token";
 const GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v3/userinfo";
 
 const oAuth2Strategy = new OAuth2Strategy({
-    authorizationURL: GOOGLE_AUTHORIZATION_URL,
-    tokenURL: GOOGLE_TOKEN_URL,
-    clientID: config.googleClientId,
-    clientSecret: config.googleClientSecret,
-    callbackURL: '/auth/google-oauth/callback',
+    authorizationURL: GOOGLE_AUTHORIZATION_URL, //This is the url to ask the user for concent
+    tokenURL: GOOGLE_TOKEN_URL, // This is the url to get the accessToken giving the authorizationToken from the last url
+    clientID: config.googleClientId, // This is the way google identify my app
+    clientSecret: config.googleClientSecret, // This is the secret for my app
+    callbackURL: '/auth/google-oauth/callback', // This is the url that google redirects with all the info after all the process
 },
-async (accessToken, refreshTOken, profile, done) => {
+async (accessToken, refreshTOken, profile, done) => { //At this point google has identified me and user, "profile" has the user info...
     const { data, status } = await axios({
         url: `${config.apiUrl}/api/auth/sign-provider`,
         method: 'post',
@@ -35,8 +35,8 @@ async (accessToken, refreshTOken, profile, done) => {
     return done(null, data);
 });
 
-oAuth2Strategy.userProfile = (accessToken, done) => {
-    this._oauth2.get(GOOGLE_USERINFO_URL, accessToken, (err, body) => {
+oAuth2Strategy.userProfile = function (accessToken, done){ //THIS RUNS BEFORE THE PREVIOUS CALLBACK, this function gets the user profile data and gives it to the previous callback
+    this._oauth2.get(GOOGLE_USERINFO_URL, accessToken, (err, body) => { //First argument is the providerUserInfoUrl and the second the accessToken
         if(err){
             return done(err)
         }
@@ -52,7 +52,7 @@ oAuth2Strategy.userProfile = (accessToken, done) => {
 
             done(null, profile);
         } catch (parseError) {
-            done(parseError)
+            done(parseError, false)
         }
     });
 }
