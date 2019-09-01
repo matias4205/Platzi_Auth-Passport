@@ -23,7 +23,7 @@ require("./utils/auth/strategies/basic");
 require("./utils/auth/strategies/oauth");
 
 // Twitter strategy
-// require("./utils/auth/strategies/twitter");
+require("./utils/auth/strategies/google");
 
 app.post("/auth/sign-in", async function(req, res, next) {
   passport.authenticate("basic", function(error, data) {
@@ -159,6 +159,34 @@ app.get(
     res.status(200).json(user);
   }
 );
+
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile", "openid"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
+  function(req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    res.status(200).json(user);
+  }
+);
+
 
 app.listen(config.port, function() {
   console.log(`Listening http://localhost:${config.port}`);
