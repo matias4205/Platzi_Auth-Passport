@@ -24,8 +24,11 @@ require("./utils/auth/strategies/basic");
 // OAuth strategy
 require("./utils/auth/strategies/oauth");
 
-// Twitter strategy
+// Google strategy
 require("./utils/auth/strategies/google");
+
+//Twitter strategy
+// require("./utils/auth/strategies/twitter"); //Commented because twitter dont wanna give me the fucking developer acc
 
 app.post("/auth/sign-in", async function(req, res, next) {
   passport.authenticate("basic", function(error, data) {
@@ -118,7 +121,7 @@ app.delete("/user-movies/:userMovieId", async function(req, res, next) {
 app.get(
   "/auth/google-oauth",
   passport.authenticate("google-oauth", {
-    scope: ["email", "profile", "openid"] //This are the scopes that the userOwner will be asked for
+    scope: ["email", "profile", "openid"] //This are the scopes that the resourceOwner will be asked for
   })
 );
 
@@ -170,22 +173,23 @@ app.get(
   })
 );
 
+//This endpoint will receive the user's token and user's data at req.user
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { session: false }),
   function(req, res, next) {
-    if (!req.user) {
+    if (!req.user) { //If there is not a user key into request trigger error
       next(boom.unauthorized());
     }
 
-    const { token, ...user } = req.user;
+    const { token, ...user } = req.user; //Extracting token and user's data
 
-    res.cookie("token", token, {
+    res.cookie("token", token, { //Creating the cookie with the token
       httpOnly: !config.dev,
       secure: !config.dev
     });
 
-    res.status(200).json(user);
+    res.status(200).json(user); //Answering with user's data
   }
 );
 

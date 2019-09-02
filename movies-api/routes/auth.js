@@ -83,35 +83,37 @@ router.post('/sign-up', validationHandler(createUserSchema), async (req, res, ne
 });
 
 router.post('/sign-provider', validationHandler(createProviderUserSchema), async (req, res, next) => {
-    const { body } = req;
-    const { apiKeyToken, ...user } = body;
+    const { body } = req; //Extractig body request data
+    const { apiKeyToken, ...user } = body; //I receive the apiToken and the user data
 
-    if(!apiKeyToken){
+    if(!apiKeyToken){ //If i dont get an apiKey trigger an error
         next(boom.unauthorized('apiKeyToken is required'));
     }
 
     try {
-        const queriedUser = await usersService.getOrCreateUser({ user });
+        //I search in my db for the given user, if i found him i get his data, and if i dont, i create it and then get his data
+        const queriedUser = await usersService.getOrCreateUser({ user }); 
+        //I look for the received apiKey token looking for the corresponding scopes
         const apiKey = await apiKeyService.getApiKey({ token: apiKeyToken });
 
-        if(!apiKey){
+        if(!apiKey){ //If there is not an API key retrived from the db triggers an error
             next(boom.unauthorized());
         }
 
-        const { _id: id, name, email } = queriedUser;
+        const { _id: id, name, email } = queriedUser; //Now extrats the data retrived from the user's database data
 
-        const payload = {
+        const payload = { //Builds the payload including user's info and the scopes
             sub: id,
             name,
             email,
             scopes: apiKey.scopes
         }
 
-        const token = jwt.sign(payload, config.authJwtSecret, {
+        const token = jwt.sign(payload, config.authJwtSecret, { //Signing the token
             expiresIn: '15m'
         })
 
-        res.status(200).json({ token, user: { id, name, email } });
+        res.status(200).json({ token, user: { id, name, email } }); //Answering with succesfull, token and user's data
     } catch (err) {
         next(err)
     }
